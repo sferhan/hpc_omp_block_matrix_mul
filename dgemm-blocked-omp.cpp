@@ -52,7 +52,7 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
    // insert your code here
    int nb = n/block_size;
 
-   LIKWID_MARKER_START(MY_MARKER_REGION_NAME)
+   LIKWID_MARKER_START(MY_MARKER_REGION_NAME);
 
    #pragma omp parallel for collapse(2)
    for(int i=0; i<nb; i++) {
@@ -75,5 +75,5 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
       }   
    }
 
-   LIKWID_MARKER_STOP(MY_MARKER_REGION_NAME)
+   LIKWID_MARKER_STOP(MY_MARKER_REGION_NAME);
 }

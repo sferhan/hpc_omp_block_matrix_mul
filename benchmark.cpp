@@ -198,7 +198,7 @@ int main(int argc, char** argv)
          else {
             double elapsed_seconds = elapsed.count();
             uint64_t n_= n;
-            double mflops = (((7*(n_*n_*n_)) + (2*(n_*n_))) / elapsed_seconds) / 1e6;
+            double mflops = ((2*(n_*n_*n_)) / elapsed_seconds) / 1e6;
 
             std::cout<<" MFLOP/S ="<<mflops<<std::endl;
             std::cout << " Elapsed time is : " << elapsed.count() << " (sec) " << std::endl<<std::endl<<std::endl;

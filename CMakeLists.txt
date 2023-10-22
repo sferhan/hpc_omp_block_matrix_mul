@@ -6,6 +6,15 @@ set(CMAKE_BUILD_TYPE "Release")
 find_package(BLAS REQUIRED)
 find_package(LIKWID QUIET)
 
+include(FindOpenMP)
+if(OPENMP_FOUND)
+    message(STATUS "OpenMP found")
+    # You can set compiler flags or other options here
+else()
+    message(STATUS "OpenMP not found")
+    # Handle the case where OpenMP is not available
+endif()
+
 # use cmake --log-level=debug to see DEBUG messages
 if ( LIKWID_FOUND ) 
    message ( STATUS "Likwid: found")
