@@ -52,28 +52,31 @@ void square_dgemm_blocked(int n, int block_size, double* A, double* B, double* C
    // insert your code here
    int nb = n/block_size;
 
-   LIKWID_MARKER_START(MY_MARKER_REGION_NAME);
+   #pragma omp parallel
+   {
+      LIKWID_MARKER_START(MY_MARKER_REGION_NAME);
 
-   #pragma omp parallel for collapse(2)
-   for(int i=0; i<nb; i++) {
-      for(int j=0; j<nb; j++) {
-         double* a_block = (double*)malloc(block_size*block_size*sizeof(double));
-         double* b_block = (double*)malloc(block_size*block_size*sizeof(double));
-         double* c_block = (double*)malloc(block_size*block_size*sizeof(double));
-         
-         load_block_in_cache(c_block, n, block_size, i, j, C);
-         for(int k=0; k<nb; k++) {
-            load_block_in_cache(a_block, n, block_size, i, k, A);
+      #pragma omp for collapse(2)
+      for(int i=0; i<nb; i++) {
+         for(int j=0; j<nb; j++) {
+            double* a_block = (double*)malloc(block_size*block_size*sizeof(double));
+            double* b_block = (double*)malloc(block_size*block_size*sizeof(double));
+            double* c_block = (double*)malloc(block_size*block_size*sizeof(double));
             
-            load_block_in_cache(b_block, n, block_size, k, j, B);
-            block_operate(block_size, a_block, b_block, c_block);
-         }
-         write_block_to_mem(c_block, n, block_size, i, j, C);
-         delete a_block;
-         delete b_block;
-         delete c_block;
-      }   
-   }
+            load_block_in_cache(c_block, n, block_size, i, j, C);
+            for(int k=0; k<nb; k++) {
+               load_block_in_cache(a_block, n, block_size, i, k, A);
+               
+               load_block_in_cache(b_block, n, block_size, k, j, B);
+               block_operate(block_size, a_block, b_block, c_block);
+            }
+            write_block_to_mem(c_block, n, block_size, i, j, C);
+            delete a_block;
+            delete b_block;
+            delete c_block;
+         }   
+      }
 
-   LIKWID_MARKER_STOP(MY_MARKER_REGION_NAME);
+      LIKWID_MARKER_STOP(MY_MARKER_REGION_NAME);
+   }
 }
